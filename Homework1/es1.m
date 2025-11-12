@@ -7,4 +7,4 @@ G = graph(s,t,w,names);
 % plot(G);
 
 V = [1;2;3;4;5];
-create_cut_r(V);
+a=compute_cuts(V, G);
