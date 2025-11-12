@@ -1,4 +1,4 @@
-function y = compute_cuts(V, G)
+function [used_combinations_cell, unused_combinations_cell, capacities] = compute_cuts(V, G)
 
 v=[];
 for i=2:size(V,1)-1
@@ -43,12 +43,8 @@ for i = 1:size(used_combinations_cell,1)
     comb_cap = 0;
     for j = 1:size(comb_U,2)
         for k = 1:size(V,1)-size(comb_U,2)
-            disp("edges");
-            disp(comb_U(j));
-            disp(comb_V(k));
             edge_idx = findedge(G,comb_U(j), comb_V(k));
             if edge_idx > 0
-                disp(G.Edges.Weight(edge_idx));
                 comb_cap = comb_cap + G.Edges.Weight(edge_idx);
             end
         end
@@ -61,5 +57,3 @@ disp('Combined results table:');
 T = table(used_combinations_cell, unused_combinations_cell, capacities);
 T.Properties.VariableNames = {'U', 'V', 'C'};
 disp(T);
-
-y = 0;

@@ -11,9 +11,7 @@ V = [1;2;3;4;5];
 
 minC = min(C);
 vecIndex = find(C==minC);
-for i =1:size(vecIndex,1)
-    fprintf('Minimum cut value: %d\n', minC);
-    U_min = U(vecIndex(i))
-    V_min = V(vecIndex(i))
+for i =1:size(vecIndex)
+    fprintf('Minimum cut value: %d', minC);
+    fprintf('U: ')
 end
-
