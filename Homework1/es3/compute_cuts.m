@@ -42,7 +42,7 @@ for i = 1:size(used_combinations_cell,1)
     comb_V = unused_combinations_cell{i};
     comb_cap = 0;
     for j = 1:size(comb_U,2)
-        for k = 1:size(V,1)-size(comb_U,2)
+        for k = 1:size(comb_V,2)
             edge_idx = findedge(G,comb_U(j), comb_V(k));
             if edge_idx > 0
                 comb_cap = comb_cap + G.Edges.Weight(edge_idx);
