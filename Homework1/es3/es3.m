@@ -80,10 +80,10 @@ lb = zeros(m,1);
 epsilon = 1e-7;
 ub = C - epsilon;
 
-options = optimoptions('fmincon','Display','iter','Algorithm','interior-point');
+options = optimoptions('fmincon','Display','off','Algorithm','interior-point');
 [f_star_fmincon, cost] = fmincon(objective, f_init, A, b, Aeq, beq, lb, ub, [], options);
 
-fprintf('Social optimum f* (computed with fmincon):\n');
+fprintf('Social optimum f*:\n');
 disp(f_star_fmincon);
 fprintf('Total cost (total travel time):\n');
 disp(cost);
@@ -92,19 +92,19 @@ disp(cost);
 fprintf('Computing Wardrop equilibrium with fmincon...\n');
 wardrop_objective = @(f) sum(-C.*l.*log(1-f./C));
 
-options = optimoptions('fmincon','Display','iter','Algorithm','interior-point');
+options = optimoptions('fmincon','Display','off','Algorithm','interior-point');
 [f_wardrop_fmincon, wardrop_cost] = fmincon(wardrop_objective, f_init, A, b, Aeq, beq, lb, ub, [], options);
 
-fprintf('Wardrop equilibrium f^(w) (computed with fmincon):\n');
+fprintf('Wardrop equilibrium f^(0):\n');
 disp(f_wardrop_fmincon);
 
 % The value of the objective function for Wardrop is not the travel time
-fprintf('Value of Wardrop objective function (fmincon):\n');
+fprintf('Value of Wardrop objective function:\n');
 disp(wardrop_cost);
 
 % To compare with social optimum, we need to compute the total travel time for the Wardrop equilibrium flow
 total_travel_time_wardrop_fmincon = sum(f_wardrop_fmincon .* l ./ (1 - f_wardrop_fmincon./C));
-fprintf('Total travel time for Wardrop equilibrium flow (fmincon):\n');
+fprintf('Total travel time for Wardrop equilibrium flow:\n');
 disp(total_travel_time_wardrop_fmincon);
 
 % exercise 3.f
@@ -133,15 +133,11 @@ if any(f0_wardrop <= 0) || any(f0_wardrop >= ub)
     f0_wardrop = f_init;
 end
 
-options = optimoptions('fmincon','Display','iter','Algorithm','interior-point');
+options = optimoptions('fmincon','Display','off','Algorithm','interior-point');
 [f_wardrop_tolls, wcost_tolls] = fmincon(wardrop_with_tolls_obj, f0_wardrop, A, b, Aeq, beq, lb, ub, [], options);
 
 fprintf('\nWardrop equilibrium with marginal-cost tolls:\n');
 disp(f_wardrop_tolls);
-
-% Compare to social optimum
-diff_norm = norm(f_wardrop_tolls - f_star);
-fprintf('Norm difference ||f^omega - f*|| = %.6e\n', diff_norm);
 
 % Compute total travel times (without tolls) for comparison
 total_travel_time_wardrop_tolls = sum(f_wardrop_tolls .* l ./ (1 - f_wardrop_tolls ./ C));
@@ -154,12 +150,6 @@ else
     fprintf('Wardrop with tolls differs from social optimum (see norm above).\n');
 end
 
-% Price of Anarchy (without tolls, and with tolls use Wardrop travel time)
-PoA_before = total_travel_time_wardrop_fmincon / cost;
-PoA_after = total_travel_time_wardrop_tolls / cost;
-fprintf('\nPrice of Anarchy before tolls: %.8f\n', PoA_before);
-fprintf('Price of Anarchy after tolls:  %.8f\n', PoA_after);
-
 % exercise 3.g
 fprintf('\n--- Exercise 3.g (system cost = total additional travel time) ---\n');
 % Define system cost psi_e(f_e) = f_e*(tau_e(f_e) - l_e)
@@ -171,7 +161,7 @@ if any(f0_psi <= lb) || any(f0_psi >= ub)
     f0_psi = f_init;
 end
 
-options = optimoptions('fmincon','Display','iter','Algorithm','interior-point');
+options = optimoptions('fmincon','Display','off','Algorithm','interior-point');
 [f_star_psi, cost_psi] = fmincon(objective_psi, f0_psi, A, b, Aeq, beq, lb, ub, [], options);
 
 fprintf('System optimum f* (for additional travel time objective):\n');
@@ -199,10 +189,6 @@ end
 
 fprintf('\nWardrop equilibrium under constructed tolls:\n');
 disp(f_wardrop_omega);
-
-% Compare flows
-norm_diff_psi = norm(f_wardrop_omega - f_star_psi);
-fprintf('Norm difference ||f^omega - f*_psi|| = %.6e\n', norm_diff_psi);
 
 % Compare system cost values (additional travel time)
 system_cost_wardrop_omega = objective_psi(f_wardrop_omega);
